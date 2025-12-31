@@ -16,13 +16,31 @@ java {
 
 repositories {
     mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/${repoPath}")
+        credentials {
+            username = (findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR"))
+            password = (findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN"))
+        }
+    }
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation platform("com.malleo:common-bom:0.1.2-SNAPSHOT")
+
+    implementation "com.malleo:common-web-starter"
+    implementation "com.malleo:common-security-starter"
+    implementation "com.malleo:common-jpa"
+    implementation "com.malleo:common-openapi-starter"
+
+    runtimeOnly "org.postgresql:postgresql"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+
+    testRuntimeOnly "com.h2database:h2"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
